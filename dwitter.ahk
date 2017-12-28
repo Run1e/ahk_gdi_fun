@@ -1,4 +1,6 @@
 ﻿/*
+	forum thread: https://autohotkey.com/boards/viewtopic.php?f=6&p=191294
+	
 	u() is called as fast as possible.
 	
 	--- global constants ---
@@ -20,7 +22,7 @@
 	h(hue, brightness) - get hue color from fraction. example: h(0) is red, h(1/3) is green and h(2/3) is blue.
 	if not specified, Color is always defaulted to 0xFFFFFF (white)
 	if not specified, brightness is always defaulted to 1
-		
+			
 	--- shorthands ---
 	s() - sin()
 	c() - cos()
@@ -36,6 +38,7 @@ u(){
 		loop 16
 			fc(w/2+s(r:=p+a++*pi/8)*f*h/35,h/2+c(r)*f*h/35,4,h(t/2+(16-f)/16))
 }
+
 
 
 
