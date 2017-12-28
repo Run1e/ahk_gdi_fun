@@ -1,33 +1,26 @@
 ﻿/*
-	--- description ---
-	
-	u(t) is called as fast as possible.
-	t contains the time elapsed since script start, in seconds.
-	
-	the goal is to create the most visually interesting result, where the
-	code character count is under 140. tabs/spaces at the start of lines
-	are not counted (however, newlines are).
-	
-	if not specified, Color is always defaulted to 0xFFFFFF (white)
-		
-	--- functions ---
-	
-	f(Color) - Fill (or clear) canvas (Color is default to 0x000000)
-	sp(x, y, Color) - SetPixel
-	dl(x1, y1, x2, y2, Color) - DrawLine
-	fr(x, y, w, h, Color) - FillRectangle
-	fe(x, y, w, h, Color) - FillEllipse
-	r(r, g, b, brightness := 1) - transform rbg values to hex
-	h(hue, brightness := 1) - get hue color from integer. example: h(0) is red, h(1/3) is green and h(2/3) is blue.
+	u() is called as fast as possible.
 	
 	--- global constants ---
-	
-	t - time elapsed since script start
-	g - GDI object
+	t - time elapsed since script start (seconds)
+	d - time elapsed since last frame (seconds, delta time)
 	w - canvas width
 	h - canvas height
-	pi - ... just pi
+	pi - 3.1415...
+	g - GDI object
 	
+	--- functions ---
+	f(Color) - Fill (or clear) canvas (Color is defaulted to 0x000000)
+	sp(x, y, Color) - SetPixel
+	dl(x1, y1, x2, y2, Color) - DrawLine
+	fc(x, y, r, Color) - FillCircle
+	fr(x, y, w, h, Color) - FillRectangle
+	fe(x, y, w, h, Color) - FillEllipse
+	r(r, g, b, brightness) - transform rbg values to hex
+	h(hue, brightness) - get hue color from fraction. example: h(0) is red, h(1/3) is green and h(2/3) is blue.
+	if not specified, Color is always defaulted to 0xFFFFFF (white)
+	if not specified, brightness is always defaulted to 1
+		
 	--- shorthands ---
 	s() - sin()
 	c() - cos()
@@ -35,12 +28,17 @@
 	a() - abs()
 */
 
+
+; this is the function you overwrite!
 u(){
-	f(r(,20,40)),d=0
-	while 17>++d,p:=s(t*3-d/9),a=0
+	f(r(,20,40)),f=0
+	while 17>++f,p:=s(t*3-f/9),a=0
 		loop 16
-			fe(w/2+s(r:=p+a++*pi/8)*d*h/35,h/2+c(r)*d*h/35,8,8,h(t/2+(16-d)/16))
+			fc(w/2+s(r:=p+a++*pi/8)*f*h/35,h/2+c(r)*f*h/35,4,h(t/2+(16-f)/16))
 }
+
+
+
 
 /*
 	=== BOILERPLATE BELOW ===
@@ -53,7 +51,7 @@ u(){
 SetWinDelay -1
 SetBatchLines -1
 
-global g, t
+global g, t, d
 global pi := 3.14159265359
 global w := 640
 global h := 640
@@ -70,9 +68,10 @@ SetTimer, FPS, 1000
 DllCall("QueryPerformanceFrequency", "Int64P", freq)
 
 Loop {
-	t += (end - start) / freq
+	t += d := (end - start) / freq
 	DllCall("QueryPerformanceCounter", "Int64P", start)
-	u(), g.bitblt()
+	u()
+	g.bitblt()
 	DllCall("QueryPerformanceCounter", "Int64P", end)
 	frames++
 }
@@ -89,6 +88,10 @@ sp(x, y, Color := 0xFFFFFF) {
 
 dl(x1, y1, x2, y2, Color := 0xFFFFFF) {
 	g.DrawLine(x1, y1, x2, y2, Color)
+}
+
+fc(x, y, r, Color := 0xFFFFFF) {
+	g.FillEllipse(x, y, r*2, r*2, Color)
 }
 
 fr(x, y, w, h, Color := 0xFFFFFF) {
